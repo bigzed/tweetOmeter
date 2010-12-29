@@ -1,0 +1,3 @@
+The idea of this script is to serve the index.html which only contains the
+number of tweets per second via a webserver and to call the script itself with a
+cronjob every 20minutes.
