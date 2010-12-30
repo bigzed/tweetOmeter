@@ -17,17 +17,21 @@ end
 starttime = Twitter::Search.new.hashtag(HASHTAG).max(startid).fetch.first.created_at
 
 current_page = search.hashtag(HASHTAG).since_id(startid).per_page(100).fetch
-next_id = current_page.first.id
+if !current_page.empty?
+  next_id = current_page.first.id
 
-counter = current_page.count
+  counter = current_page.count
 
-while search.next_page?() do
-  current_page = search.fetch_next_page
-  counter += current_page.count
+  while search.next_page?() do
+    current_page = search.fetch_next_page
+    counter += current_page.count
+  end
+  quotient = (counter / (Time.now - Time.parse(starttime)))*60*60
+  id_store = File.new("id.store","w")
+  id_store.write "#{next_id}"
+else
+  quotient = 0
 end
-quotient = (counter / (Time.now - Time.parse(starttime)))*60*60
+puts "Aktuelle Tweets/h: #{quotient}"
 index = File.new("html/index.html", "w")
 index.write "#{quotient.truncate}"
-
-id_store = File.new("id.store","w")
-id_store.write "#{next_id}"
